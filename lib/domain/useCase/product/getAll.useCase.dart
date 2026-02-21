@@ -3,13 +3,13 @@ import 'package:meal_planner/domain/entities/product.entity.dart';
 import 'package:meal_planner/domain/useCase/use_case.dart';
 import 'package:meal_planner/utils/result.dart';
 
-final class AddProductUseCase implements UseCase<ProductEntity, void> {
+final class GetAllProductsUseCase implements UseCase<void, List<ProductEntity>> {
   final ProductRepository _productRepository;
 
-  AddProductUseCase({required ProductRepository productRepository}) : _productRepository = productRepository;
+  GetAllProductsUseCase({required ProductRepository productRepository}) : _productRepository = productRepository;
 
   @override
-  Future<Result<void>> call(ProductEntity input) async {
-    return await _productRepository.add(input);
+  Future<Result<List<ProductEntity>>> call(void input) async {
+    return await _productRepository.getAll();
   }
 }
