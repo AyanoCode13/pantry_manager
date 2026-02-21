@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:meal_planner/config/providers/app.providers.dart';
+import 'package:provider/provider.dart';
 
-void main() {
-  runApp(const MainApp());
+Future<void> main() async {
+  final providers = await appProviders;
+  runApp(MultiProvider(providers: providers, child: const MainApp()));
 }
 
 class MainApp extends StatelessWidget {
