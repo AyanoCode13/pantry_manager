@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:meal_planner/config/routing/routes.dart';
+import 'package:meal_planner/config/routing/routes/product.routes.dart';
 import 'package:meal_planner/domain/entities/product.entity.dart';
 import 'package:meal_planner/ui/screens/product/products.list.dart';
 import 'package:meal_planner/ui/viewModels/product.viewModel.dart';
@@ -27,7 +27,7 @@ final class ProductsScreen extends StatelessWidget {
           return CustomScrollView(slivers: [
             SliverAppBar(title: Text('Products'), actions: [
               IconButton.filled(onPressed: (){
-                context.push(Routes.addProduct);
+                context.push(ProductRoutes.add);
               }, icon: Icon(Icons.add))
             ],),
             ProductsList()

@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:meal_planner/data/local/models/product.model.dart';
 import 'package:meal_planner/domain/entities/product.entity.dart';
 import 'package:meal_planner/domain/useCase/product/add.useCase.dart';
 import 'package:meal_planner/domain/useCase/product/delele.useCase.dart';
@@ -26,18 +27,21 @@ final class ProductViewModel extends ChangeNotifier {
       add = ComplexCommand(_add);
       
   }
-  
-  late List<ProductEntity> _products;
+
+  late List<Map<ProductModel, ProductEntity>> _productsWithModels;
+  late ProductModel _selectedProduct;
+  ProductModel get selectedProduct => _selectedProduct;
+
 
   late final BasicCommand load;
   late final ComplexCommand<void, ProductEntity> add;
-  List<ProductEntity> get products => _products;
+  List<ProductEntity> get products => _productsWithModels.map((e) => e.values.first).toList();
   Future<Result<void>> _load() async {
     try {
       final res = await _getAllProductsUseCase.call(null);
       switch (res) {
         case Ok<List<ProductEntity>>():
-          _products = res.value;
+          _productsWithModels = res.value.map((e) => {ProductModel.fromEntity(e): e}).toList();
         case Error<List<ProductEntity>>():
           Result.error(res.error);
       }
@@ -62,5 +66,27 @@ final class ProductViewModel extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  Future<Result<void>> delete(ProductEntity product) async {
+    try {
+      final productModel = _productsWithModels.firstWhere((e) => e.values.first == product).keys.first;
+      final res = await _deleteProductUseCase.call(productModel.id);
+      switch (res) {
+        case Ok<void>():
+          return Result.ok(null);
+        case Error<void>():
+          return Result.error(res.error);
+      }
+    }
+    finally {
+      notifyListeners();
+    }
+  }
+
+  void select(ProductEntity product) {
+    _selectedProduct = _productsWithModels.firstWhere((e) => e.values.first == product).keys.first;
+    notifyListeners();
+  }
+  
 }
 
