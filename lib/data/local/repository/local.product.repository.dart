@@ -13,7 +13,7 @@ final class LocalProductRepository  implements ProductRepository {
   Future<Result<void>> add(ProductEntity product) async {
     // TODO: implement add
     try {
-      final res = await _productDAO.insertProduct(product as ProductModel);
+      final res = await _productDAO.insertProduct(ProductModel.fromEntity(product));
       return Result.ok(res);
     } on Exception catch (e) {
       return Result.error(e);
@@ -24,7 +24,7 @@ final class LocalProductRepository  implements ProductRepository {
   Future<Result<void>> delete(String id) async {
     // TODO: implement delete
     try {
-      final res =  await _productDAO.deleteProduct(int.parse(id));
+      final res =  await _productDAO.deleteProduct(id);
       return Result.ok(res);
     } on Exception catch (e) {
       return Future.value(Result.error(e));
@@ -46,7 +46,7 @@ final class LocalProductRepository  implements ProductRepository {
   Future<Result<ProductEntity>> getById(String id) async {
     // TODO: implement getById
     try {
-      final res = await _productDAO.findProductById(int.parse(id));
+      final res = await _productDAO.findProductById(id);
       return Future.value(Result.ok(res as ProductEntity));
     } on Exception catch (e) {
       return Future.value(Result.error(e));
@@ -57,7 +57,7 @@ final class LocalProductRepository  implements ProductRepository {
   Future<Result<void>> update(ProductEntity product) async {
     // TODO: implement update
     try {
-      final res = await _productDAO.updateProduct(product as ProductModel);
+      final res = await _productDAO.updateProduct(ProductModel.fromEntity(product));
       return Future.value(Result.ok(res));
     } on Exception catch (e) {
       return Future.value(Result.error(e));
