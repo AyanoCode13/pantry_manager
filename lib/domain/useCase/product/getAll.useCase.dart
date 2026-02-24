@@ -9,7 +9,7 @@ final class GetAllProductsUseCase implements UseCase<void, List<ProductEntity>> 
   GetAllProductsUseCase({required ProductRepository productRepository}) : _productRepository = productRepository;
 
   @override
-  Future<Result<List<ProductEntity>>> call(void input) async {
+  Future<Result<List<ProductEntity>>> call({required void input}) async {
     return await _productRepository.getAll();
   }
 }

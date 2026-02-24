@@ -9,7 +9,7 @@ final class GetByIdUseCase extends UseCase<String, ProductEntity> {
   GetByIdUseCase({required ProductRepository productRepository}) : _productRepository = productRepository;
 
   @override
-  Future<Result<ProductEntity>> call(String input) async {
+  Future<Result<ProductEntity>> call({required String input}) async {
     try {
       final res = await _productRepository.getById(input);
       return res;

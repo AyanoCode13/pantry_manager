@@ -8,12 +8,13 @@ final class ViewAndEditProductScreen extends StatelessWidget {
   
   @override
   Widget build(BuildContext context) {
-   
+   final product = context.watch<ProductViewModel>().selectedProduct;
     // TODO: implement build
     return Scaffold(
       appBar: AppBar(actions: [ IconButton(onPressed: (){
-          context.read<ProductViewModel>().delete.execute(arg: context.watch<ProductViewModel>().selectedProduct!);
-          context.pop();
+        print(product);
+        context.read<ProductViewModel>().delete.execute(arg: product);
+        context.pop();
         }, icon: Icon(Icons.delete))],),
       body: Center(child: Text("View and Edit"),),
     );

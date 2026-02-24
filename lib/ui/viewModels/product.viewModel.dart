@@ -26,20 +26,25 @@ final class ProductViewModel extends ChangeNotifier {
     load = BasicCommand(_load)..execute();
     add = ComplexCommand(_add);
     delete = ComplexCommand(_delete);
+    getById = ComplexCommand(_getById);
   }
   final Logger _logger = Logger();
 
   late List<ProductEntity> _products;
-  late ProductEntity? _selectedProduct;
-  ProductEntity? get selectedProduct => _selectedProduct;
+  List<ProductEntity> get products => _products;
+
+  late ProductEntity _selectedProduct;
+  ProductEntity get selectedProduct => _selectedProduct;
 
   late final BasicCommand load;
   late final ComplexCommand<void, ProductEntity> add;
   late final ComplexCommand<void, ProductEntity> delete;
-  List<ProductEntity> get products => _products;
+  late final ComplexCommand<ProductEntity, String> getById;
+  
+  
   Future<Result<void>> _load() async {
     try {
-      final res = await _getAllProductsUseCase.call(null);
+      final res = await _getAllProductsUseCase.call(input: null);
       switch (res) {
         case Ok<List<ProductEntity>>():
           _products = res.value;
@@ -52,9 +57,25 @@ final class ProductViewModel extends ChangeNotifier {
     }
   }
 
+  Future<Result<ProductEntity>> _getById(String id) async {
+    try {
+      final res = await _getByIdUseCase.call(input: id);
+      switch (res) {
+        case Ok<ProductEntity>():
+          _selectedProduct = res.value;
+          return Result.ok(res.value);
+        case Error<ProductEntity>():
+          Result.error(res.error);
+      }
+      return res;
+    } finally {
+      notifyListeners();
+    }
+  }
+
   Future<Result<void>> _add(ProductEntity product) async {
     try {
-      final res = await _addProductUseCase.call(product);
+      final res = await _addProductUseCase.call(input: product);
       switch (res) {
         case Ok<ProductEntity>():
           await _load();
@@ -69,11 +90,11 @@ final class ProductViewModel extends ChangeNotifier {
 
   Future<Result<void>> _delete(ProductEntity product) async {
     try {
-      final res = await _deleteProductUseCase.call(product.id);
+      final res = await _deleteProductUseCase.call(input: product.id);
       switch (res) {
         case Ok<void>():
           _products.remove(product);
-          _selectedProduct = null;
+
           return Result.ok(null);
         case Error<void>():
           return Result.error(res.error);
@@ -81,11 +102,5 @@ final class ProductViewModel extends ChangeNotifier {
     } finally {
       notifyListeners();
     }
-
-    
-  }
-  void selectProduct (ProductEntity product){
-    _selectedProduct = product;
-    notifyListeners();
   }
 }

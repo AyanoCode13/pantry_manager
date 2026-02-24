@@ -9,7 +9,7 @@ final class AddProductUseCase implements UseCase<ProductEntity, ProductEntity> {
   AddProductUseCase({required ProductRepository productRepository}) : _productRepository = productRepository;
 
   @override
-  Future<Result<ProductEntity>> call(ProductEntity input) async {
+  Future<Result<ProductEntity>> call({ required ProductEntity input}) async {
     final res = await _productRepository.add(input);
     switch (res) {
       case Ok<void>():

@@ -51,7 +51,8 @@ final class LocalProductRepository  implements ProductRepository {
     // TODO: implement getById
     try {
       final res = await _productDAO.findProductById(id);
-      return Future.value(Result.ok(res as ProductEntity));
+
+      return Future.value(Result.ok(res!.toEntity()));
     } on Exception catch (e) {
       return Future.value(Result.error(e));
     }

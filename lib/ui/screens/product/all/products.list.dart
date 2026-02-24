@@ -30,7 +30,7 @@ final class _ProductListItem extends StatelessWidget {
       title: Text(product.name),
       trailing: IconButton(onPressed: (){context.read<ProductViewModel>().delete.execute(arg: product);}, icon: Icon(Icons.delete)), 
       onTap: () {
-        context.read<ProductViewModel>().selectProduct(product);
+        context.read<ProductViewModel>().getById.execute(arg: product.id);
         context.push(ProductRoutes.view(product.name));
       }
     );
