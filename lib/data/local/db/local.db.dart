@@ -13,7 +13,7 @@ abstract class LocalDatabase extends FloorDatabase {
   static late LocalDatabase _instance;
   static LocalDatabase get instance => _instance;
   static Future<void> initialize() async{
-    _instance = await $FloorLocalDatabase.databaseBuilder('local.db').build();
+    _instance = await $FloorLocalDatabase.databaseBuilder('local.db_3').build();
   }
 }
 

@@ -1,18 +1,23 @@
-import 'package:equatable/equatable.dart';
+import 'package:meal_planner/domain/abstract/model.dart';
+import 'package:uuid/uuid.dart';
 
-class ProductEntity extends Equatable {
-
+class ProductEntity extends Model {
   final String name;
 
   const ProductEntity({
-
+    required super.id,
     required this.name,
   });
-  
+
+   factory ProductEntity.create({
+    required String name,
+  }) {
+    return ProductEntity(
+      id: const Uuid().v4(),
+      name: name,
+    );
+  }
+
   @override
-  // TODO: implement props
-  List<Object?> get props => [name];
-
-  
-
+  List<Object?> get props => [id, name];
 }

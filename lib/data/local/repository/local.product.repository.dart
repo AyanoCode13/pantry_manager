@@ -24,6 +24,7 @@ final class LocalProductRepository  implements ProductRepository {
   Future<Result<void>> delete(String id) async {
     // TODO: implement delete
     try {
+      print("Deleted Product with Id: $id");
       final res =  await _productDAO.deleteProduct(id);
       return Result.ok(res);
     } on Exception catch (e) {
@@ -36,7 +37,10 @@ final class LocalProductRepository  implements ProductRepository {
     // TODO: implement getAll
     try {
       final res = await _productDAO.findAllProducts();
-      return Future.value(Result.ok(res));
+
+      return Future.value(Result.ok(
+        res.map((e) => e.toEntity()).toList()
+      ));
     } on Exception catch (e) {
       return Future.value(Result.error(e));
     }

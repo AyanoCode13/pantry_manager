@@ -8,9 +8,9 @@ class DeleteProductUseCase implements UseCase<String, void> {
   DeleteProductUseCase({required ProductRepository productRepository}) : _productRepository = productRepository;
 
   @override
-  Future<Result<void>> call(String input) {
+  Future<Result<void>> call(String input) async {
     // TODO: implement call
-    return _productRepository.delete(input);
+    return await _productRepository.delete(input);
   }
   
 }
