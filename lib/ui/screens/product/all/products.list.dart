@@ -13,10 +13,13 @@ final class ProductsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final products = context.watch<ProductViewModel>().products;
-    return SliverList.builder(itemCount: products.length, itemBuilder: (context, index) {
-      final product = products[index];
-      return _ProductListItem(product: product);
-    });
+    return SliverList.builder(
+      itemCount: products.length,
+      itemBuilder: (context, index) => Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: _ProductListItem(product: products.elementAt(index)),
+      ),
+    );
   }
 }
 
@@ -27,12 +30,16 @@ final class _ProductListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      title: Text(product.name),
-      trailing: IconButton(onPressed: (){context.read<ProductViewModel>().delete.execute(arg: product);}, icon: Icon(Icons.delete)), 
       onTap: () {
         context.read<ProductViewModel>().getById.execute(arg: product.id);
-        context.push(ProductRoutes.view(product.name));
-      }
+        context.push(ProductRoutes.view(product));
+      },
+      leading: Text.rich(TextSpan(text: "${product.quantity}x")),
+      title: Text.rich(TextSpan(text: "Name: ${product.name}")),
+      subtitle: Text.rich(TextSpan(text: "Price: ${product.price}")),
+      trailing: IconButton(onPressed: (){
+        context.read<ProductViewModel>().delete.execute(arg: product);
+      }, icon: Icon(Icons.delete)),
     );
   }
 }

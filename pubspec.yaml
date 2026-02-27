@@ -16,6 +16,8 @@ dependencies:
   go_router: ^17.1.0
   uuid: ^4.5.3
   logger: ^2.6.2
+  image_picker: ^1.2.1
+  path_provider: ^2.1.5
 
 dev_dependencies:
   flutter_test:
@@ -25,4 +27,8 @@ dev_dependencies:
   floor_generator: ^1.4.2
 
 flutter:
+  assets:
+    - assets/
+    - assets/products/
   uses-material-design: true
+

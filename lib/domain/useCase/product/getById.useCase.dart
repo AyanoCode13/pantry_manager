@@ -1,23 +1,21 @@
-import 'package:meal_planner/domain/abstract/product.repository.dart';
+import 'package:meal_planner/domain/abstract/repository.dart';
 import 'package:meal_planner/domain/entities/product.entity.dart';
-import 'package:meal_planner/domain/useCase/use_case.dart';
+import 'package:meal_planner/domain/abstract/use_case.dart';
 import 'package:meal_planner/utils/result.dart';
 
 final class GetByIdUseCase extends UseCase<String, ProductEntity> {
-  final ProductRepository _productRepository;
+  final Repository<ProductEntity> _repository;
 
-  GetByIdUseCase({required ProductRepository productRepository}) : _productRepository = productRepository;
+  GetByIdUseCase({required Repository<ProductEntity> repository})
+    : _repository = repository;
 
   @override
   Future<Result<ProductEntity>> call({required String input}) async {
     try {
-      final res = await _productRepository.getById(input);
+      final res = await _repository.getById(input);
       return res;
-    }
-    on Exception catch (e) {
+    } on Exception catch (e) {
       return Result.error(e);
     }
   }
-
-
 }

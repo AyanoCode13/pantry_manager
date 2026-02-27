@@ -5,8 +5,8 @@ import 'package:meal_planner/ui/screens/product/all/products.list.dart';
 import 'package:meal_planner/ui/viewModels/product.viewModel.dart';
 import 'package:provider/provider.dart';
 
-final class ProductsViewAllScreen extends StatelessWidget {
-  const ProductsViewAllScreen({super.key});
+final class ProductViewAllScreen extends StatelessWidget {
+  const ProductViewAllScreen({super.key});
 
   
   @override
