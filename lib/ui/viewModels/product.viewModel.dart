@@ -34,8 +34,8 @@ final class ProductViewModel extends ChangeNotifier {
   late List<ProductEntity> _products;
   List<ProductEntity> get products => _products;
 
-  late ProductEntity _product;
-  ProductEntity get product => _product;
+  late ProductEntity? _product;
+  ProductEntity get product => _product!;
 
   late final BasicCommand load;
   late final ComplexCommand<void, CreateProductDTO> add;

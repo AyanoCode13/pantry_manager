@@ -9,23 +9,25 @@ final class FileStorageService {
     return dir;
   }
 
-  Future<String> saveFile(File file, String fileName, String folder) async {
+  Future<String> saveFile(File file, String folder) async {
     final baseDir = await _getBaseDir();
     final targetDir = Directory('${baseDir.path}/$folder');
-
     if (!await targetDir.exists()) {
       await targetDir.create(recursive: true);
     }
 
     final newPath = '${targetDir.path}/${file.path.split('/').last}';
-    await file.copy(newPath);
-
-    return newPath;
+    print("Saving file to: $newPath");
+    file = await file.copy(newPath);
+    final filename = newPath.split("/").last;
+    print("File saved with name: $filename");
+    return filename;
   }
 
   Future<File?> getFile(String folder, String fileName) async {
     final baseDir = await _getBaseDir();
     final path = '${baseDir.path}/$folder/$fileName';
+    print("File path: $path");
     final file = File(path);
     return await file.exists() ? file : null;
   }

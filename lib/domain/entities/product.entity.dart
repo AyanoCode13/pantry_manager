@@ -1,8 +1,7 @@
 import 'dart:io';
 
-import 'package:image_picker/image_picker.dart';
-import 'package:meal_planner/domain/dto/product/create.product.dto.dart';
 import 'package:meal_planner/domain/abstract/model.dart';
+import 'package:meal_planner/domain/dto/product/create.product.dto.dart';
 import 'package:uuid/uuid.dart';
 
 class ProductEntity extends Model {
@@ -27,7 +26,7 @@ class ProductEntity extends Model {
       name: dto.name, 
       price: dto.price, 
       quantity: dto.quantity,
-      image: dto.image != null ? File(dto.image!.path) : null,
+      image: dto.image != null ? File(dto.image!.path) : null
     );
   }
 

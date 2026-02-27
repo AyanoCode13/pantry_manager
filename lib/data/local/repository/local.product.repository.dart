@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:meal_planner/data/local/dao/product.dao.dart';
 import 'package:meal_planner/data/local/models/product.model.dart';
 import 'package:meal_planner/domain/abstract/repository.dart';
@@ -11,18 +9,35 @@ final class LocalProductRepository implements Repository<ProductEntity> {
   final ProductDAO _productDAO;
   final FileStorageService _fileStorageService;
 
-  LocalProductRepository({required ProductDAO productDAO, required FileStorageService fileStorageService})
-    : _productDAO = productDAO,
-      _fileStorageService = fileStorageService;
+  LocalProductRepository({
+    required ProductDAO productDAO,
+    required FileStorageService fileStorageService,
+  }) : _productDAO = productDAO,
+       _fileStorageService = fileStorageService;
 
   @override
   Future<Result<void>> add(ProductEntity product) async {
     // TODO: implement add
     try {
+      late final String imagePath;
+
       if (product.image != null) {
-        await _fileStorageService.saveFile(product.image!, product.name, "/products/${product.id}");
+        imagePath = await _fileStorageService.saveFile(
+          product.image!,
+          "products/${product.id}",
+        );
       }
-      final res = await _productDAO.insertProduct(ProductModel.fromEntity(product));
+
+      print(imagePath);
+      final ProductModel productModel = ProductModel(
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        quantity: product.quantity,
+        image: imagePath,
+      );
+      print(productModel);
+      final res = await _productDAO.insertProduct(productModel);
       return Result.ok(res);
     } on Exception catch (e) {
       return Result.error(e);
@@ -34,7 +49,7 @@ final class LocalProductRepository implements Repository<ProductEntity> {
     // TODO: implement delete
     try {
       print("Deleted Product with Id: $id");
-      final res =  await _productDAO.deleteProduct(id);
+      final res = await _productDAO.deleteProduct(id);
       await _fileStorageService.deleteFiles("/products/$id");
       return Result.ok(res);
     } on Exception catch (e) {
@@ -47,19 +62,15 @@ final class LocalProductRepository implements Repository<ProductEntity> {
     // TODO: implement getAll
     try {
       final res = await _productDAO.findAllProducts();
-      final products = res.map((e) async { 
-          final file = await _fileStorageService.getFile("/products/${e.id}", e.name);
-          return ProductEntity(
-            id: e.id,
-            name: e.name,
-            price: e.price,
-            quantity: e.quantity,
-            image: file
-          );
-        }).toList();
-      return Future.value(Result.ok(
-        await Future.wait(products)
-      ));
+      final products = res.map((e) {
+        return ProductEntity(
+          id: e.id,
+          name: e.name,
+          price: e.price,
+          quantity: e.quantity,
+        );
+      }).toList();
+      return Result.ok(products);
     } on Exception catch (e) {
       return Future.value(Result.error(e));
     }
@@ -70,8 +81,21 @@ final class LocalProductRepository implements Repository<ProductEntity> {
     // TODO: implement getById
     try {
       final res = await _productDAO.findProductById(id);
+      final image = await _fileStorageService.getFile(
+          "products/${res!.id}",
+          res.image!,
+        );
+        print(res.image);
+      final ProductEntity product = ProductEntity(
+        id: res.id,
+        name: res.name,
+        price: res.price,
+        quantity: res.quantity,
+        image: image,
+      );
+      print(product);
 
-      return Future.value(Result.ok(res!.toEntity()));
+      return Future.value(Result.ok(product));
     } on Exception catch (e) {
       return Future.value(Result.error(e));
     }
@@ -81,12 +105,12 @@ final class LocalProductRepository implements Repository<ProductEntity> {
   Future<Result<void>> update(ProductEntity product) async {
     // TODO: implement update
     try {
-      final res = await _productDAO.updateProduct(ProductModel.fromEntity(product));
+      final res = await _productDAO.updateProduct(
+        ProductModel.fromEntity(product),
+      );
       return Future.value(Result.ok(res));
     } on Exception catch (e) {
       return Future.value(Result.error(e));
     }
   }
-  
-
 }

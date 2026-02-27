@@ -1,6 +1,3 @@
-import 'dart:io';
-import 'dart:math';
-
 import 'package:floor/floor.dart';
 import 'package:meal_planner/domain/entities/product.entity.dart';
 
@@ -25,9 +22,5 @@ class ProductModel {
 
   factory ProductModel.fromEntity(ProductEntity entity) {
     return ProductModel(id: entity.id, name: entity.name, price: entity.price, quantity: entity.quantity, image: entity.image?.path);
-  }
-
-  ProductEntity toEntity() {
-    return ProductEntity(id: id, name: name, price: price, quantity: quantity, image: image != null ? File(image!) : null);
   }
 }

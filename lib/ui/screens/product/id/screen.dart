@@ -10,7 +10,8 @@ final class ViewAndEditProductScreen extends StatefulWidget {
   const ViewAndEditProductScreen({super.key});
 
   @override
-  State<ViewAndEditProductScreen> createState() => _ViewAndEditProductScreenState();
+  State<ViewAndEditProductScreen> createState() =>
+      _ViewAndEditProductScreenState();
 }
 
 class _ViewAndEditProductScreenState extends State<ViewAndEditProductScreen> {
@@ -46,111 +47,144 @@ class _ViewAndEditProductScreenState extends State<ViewAndEditProductScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('New Product')),
-      body: SafeArea(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Flexible(
-              fit: FlexFit.tight,
-              child: GestureDetector(
-                onTap: () async {
-                  //Show a toast with 2 options: "Take a photo" and "Choose from gallery"
-                  showModalBottomSheet(
-                    context: context,
-                    builder: (context) => Column(
-                      mainAxisSize: MainAxisSize.min,
+    return ListenableBuilder(
+      listenable: context.watch<ProductViewModel>().getById,
+      builder: (context, child) {
+        if (context.watch<ProductViewModel>().getById.running) {
+          return Center(child: const CircularProgressIndicator());
+        }
+        final product = context.watch<ProductViewModel>().product;
+        _nameFormField.controller!.text = product.name;
+        _priceFormField.controller!.text = product.price.toString();
+        _quantityFormField.controller!.text = product.quantity.toString();
+        return child!;
+      },
+      child: ListenableBuilder(
+        listenable: context.watch<ProductViewModel>(),
+        builder: (context, _) {
+          final product = context.watch<ProductViewModel>().product;
+          return Scaffold(
+            appBar: AppBar(
+              title: Text(product.name),
+              actions: [
+                IconButton(
+                  onPressed: () {
+                    context.read<ProductViewModel>().delete.execute(
+                      arg: product,
+                    );
+                    context.pop();
+                  },
+                  icon: Icon(Icons.delete),
+                ),
+                IconButton(onPressed: (){
+                  context.pop();
+                }, icon: Icon(Icons.save))
+                
+              ],
+            ),
+            body: SafeArea(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    
+                    child: GestureDetector(
+                      onTap: () async {
+                        //Show a toast with 2 options: "Take a photo" and "Choose from gallery"
+                        showModalBottomSheet(
+                          context: context,
+                          builder: (context) => Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              ListTile(
+                                leading: Icon(Icons.camera_alt),
+                                title: Text("Take a photo"),
+                                onTap: () async {
+                                  final pickedFile = await _picker.pickImage(
+                                    source: ImageSource.camera,
+                                  );
+                                  if (pickedFile != null) {
+                                    setState(() {
+                                      _image = pickedFile;
+                                      context.pop();
+                                    });
+                                  }
+                                },
+                              ),
+                              ListTile(
+                                leading: Icon(Icons.photo_library),
+                                title: Text("Choose from gallery"),
+                                onTap: () async {
+                                  final pickedFile = await _picker.pickImage(
+                                    source: ImageSource.gallery,
+                                  );
+                                  if (pickedFile != null) {
+                                    setState(() {
+                                      _image = pickedFile;
+                                      context.pop();
+                                    });
+                                  }
+                                },
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                      child: Container(
+                        constraints: BoxConstraints.tight(
+                          MediaQuery.sizeOf(context) * 0.9,
+                        ),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey),
+                          borderRadius: BorderRadius.circular(15),
+
+                          image: DecorationImage(
+                            fit: BoxFit.cover,
+                            scale: product.image != null ? 0.2 : 1.0,
+                            image: product.image != null
+                                ? FileImage(product.image!)
+                                : AssetImage("assets/no_image.png"),
+                          ),
+                        ),
+                        child: Center(
+                          child: _image != null
+                              ? IconButton(
+                                  splashColor: Colors.white,
+                                  splashRadius: 48,
+                                  iconSize: 48,
+                                  onPressed: () {
+                                    setState(() {
+                                      _image = null;
+                                    });
+                                  },
+                                  icon: Icon(Icons.delete, color: Colors.red),
+                                )
+                              : null,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Column(
+                      spacing: 10,
                       children: [
-                        ListTile(
-                          leading: Icon(Icons.camera_alt),
-                          title: Text("Take a photo"),
-                          onTap: () async {
-                            final pickedFile = await _picker.pickImage(
-                              source: ImageSource.camera,
-                            );
-                            if (pickedFile != null) {
-                              setState(() {
-                                _image = pickedFile;
-                                context.pop();
-                              });
-                            }
-                          },
-                        ),
-                        ListTile(
-                          leading: Icon(Icons.photo_library),
-                          title: Text("Choose from gallery"),
-                          onTap: () async {
-                            final pickedFile = await _picker.pickImage(
-                              source: ImageSource.gallery,
-                            );
-                            if (pickedFile != null) {
-                              setState(() {
-                                _image = pickedFile;
-                                context.pop();
-                              });
-                            }
-                          },
-                        ),
+                        _nameFormField,
+                        _priceFormField,
+                        _quantityFormField,
                       ],
                     ),
-                  );
-                },
-                child: Container(
-                  constraints: BoxConstraints.tight(
-                    MediaQuery.sizeOf(context) * 0.9,
                   ),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey),
-                    borderRadius: BorderRadius.circular(15),
-
-                    image: DecorationImage(
-                      scale: _image != null ? 0.2 : 1.0,
-                      image: _image != null
-                          ? FileImage(File(_image!.path))
-                          : AssetImage("assets/no_image.png"),
-                    ),
-                  ),
-                  child: Center(
-                    child: _image != null
-                        ? IconButton(
-                            splashColor: Colors.white,
-                            splashRadius: 48,
-                            iconSize: 48,
-                            onPressed: () {
-                              setState(() {
-                                _image = null;
-                              });
-                            },
-                            icon: Icon(Icons.delete, color: Colors.red),
-                          )
-                        : null,
-                  ),
-                ),
+                
+                 
+                ],
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Column(
-                spacing: 10,
-                children: [_nameFormField, _priceFormField, _quantityFormField],
-              ),
-            ),
-
-            ElevatedButton.icon(
-              onPressed: () {
-                
-                context.pop();
-                
-              },
-              label: Text("Save"),
-              icon: Icon(Icons.save),
-            ),
-          ],
-        ),
+          );
+        },
       ),
     );
-    }
+  }
 }
 
 
