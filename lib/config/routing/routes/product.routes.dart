@@ -1,4 +1,4 @@
-import 'package:meal_planner/domain/entities/product.entity.dart';
+import 'package:meal_planner/domain/entities/product/product.entity.dart';
 
 abstract final class ProductRoutes {
   static const String viewAll = '/products';

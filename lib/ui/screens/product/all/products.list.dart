@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:meal_planner/config/routing/routes/product.routes.dart';
-import 'package:meal_planner/domain/entities/product.entity.dart';
+import 'package:meal_planner/domain/entities/product/product.entity.dart';
+
 import 'package:meal_planner/ui/viewModels/product.viewModel.dart';
 import 'package:provider/provider.dart';
 

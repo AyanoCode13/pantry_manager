@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:meal_planner/config/routing/routes/recipe.routes.dart';
-import 'package:meal_planner/domain/entities/recipe.entity.dart';
-import 'package:meal_planner/ui/viewModels/product.viewModel.dart';
+import 'package:meal_planner/domain/entities/recipe/recipe.entity.dart';
 import 'package:meal_planner/ui/viewModels/recipe.viewModel.dart';
 import 'package:provider/provider.dart';
 
@@ -32,17 +29,10 @@ final class _RecipeListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      onTap: () {
-        context.read<ProductViewModel>().getById.execute(arg: _recipe.id);
-        context.push(RecipeRoutes.view(_recipe));
-      },
-      
-      title: Text.rich(TextSpan(text: "Name: ${_recipe.name}")),
-      subtitle: Text.rich(TextSpan(text: "Price: ${_recipe.price}")),
-      trailing: IconButton(onPressed: (){
-       
-      }, icon: Icon(Icons.delete)),
+    return GestureDetector(
+      child: Container(
+        child: Text(_recipe.name),
+      )
     );
   }
 }

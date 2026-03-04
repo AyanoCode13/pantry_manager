@@ -1,7 +1,7 @@
 import 'package:meal_planner/data/local/dao/recipe.dao.dart';
 import 'package:meal_planner/data/local/models/recipe.model.dart';
 import 'package:meal_planner/domain/abstract/repository.dart';
-import 'package:meal_planner/domain/entities/recipe.entity.dart';
+import 'package:meal_planner/domain/entities/recipe/recipe.entity.dart';
 import 'package:meal_planner/service/file.storage.service.dart';
 import 'package:meal_planner/utils/result.dart';
 
@@ -17,8 +17,23 @@ final class LocalRecipeRepsitory implements Repository<RecipeEntity>{
   Future<Result<void>> add(RecipeEntity input) async {
     // TODO: implement add
     try{
-      
-      final res = await _recipeDAO.insertRecipe(RecipeModel.fromEntity(input));
+      late final String path;
+      if(input.image != null){
+        path = await _fileStorageService.saveFile(
+          input.image!,
+          input.id,
+        );
+      }
+
+      final recipe = RecipeModel(
+        id: input.id,
+        name: input.name,
+        description: input.description ?? "",
+        price: input.price,
+        image: path,
+        preparationTime: input.preparationTime,
+      );
+      final res = await _recipeDAO.insertRecipe(recipe);
       print("Recipe Created");
       return Result.ok(res);
       
@@ -38,7 +53,15 @@ final class LocalRecipeRepsitory implements Repository<RecipeEntity>{
     // TODO: implement getAll
     try{
       final res = await _recipeDAO.getAll();
-      return Result.ok(res.map((e)=>e.toEntity()).toList());
+      final recipes = res.map((e) async => RecipeEntity(
+        id: e.id,
+        name: e.name,
+        description: e.description,
+        price: e.price,
+        preparationTime: e.preparationTime,
+        image: await _fileStorageService.getFile(e.image, e.id),
+      )).toList();
+      return Result.ok( await Future.wait(recipes));
     } on Exception catch(e){
       return Result.error(e);
     }

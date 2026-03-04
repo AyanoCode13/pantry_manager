@@ -48,7 +48,26 @@ class _AddProductScreenState extends State<AddProductScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('New Product')),
+      appBar: AppBar(
+        title: const Text('New Product'),
+        actions: [
+          IconButton(
+            onPressed: () {
+              context.read<ProductViewModel>().add.execute(
+                arg: CreateProductDTO(
+                  name: _nameFormField.controller!.text,
+                  description: "",
+                  price: _priceFormField.controller!.text,
+                  quantity: _quantityFormField.controller!.text,
+                  image: _image,
+                ),
+              );
+              context.pop();
+            },
+            icon: Icon(Icons.save),
+          ),
+        ],
+      ),
       body: SafeArea(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -104,8 +123,8 @@ class _AddProductScreenState extends State<AddProductScreen> {
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.grey),
                     borderRadius: BorderRadius.circular(15),
-
                     image: DecorationImage(
+                      fit: _image != null ? BoxFit.cover : null,
                       scale: _image != null ? 0.2 : 1.0,
                       image: _image != null
                           ? FileImage(File(_image!.path))
@@ -136,23 +155,6 @@ class _AddProductScreenState extends State<AddProductScreen> {
                 spacing: 10,
                 children: [_nameFormField, _priceFormField, _quantityFormField],
               ),
-            ),
-
-            ElevatedButton.icon(
-              onPressed: () {
-                context.read<ProductViewModel>().add.execute(
-                  arg: CreateProductDTO(
-                    name: _nameFormField.controller!.text,
-                    price: _priceFormField.controller!.text,
-                    quantity: _quantityFormField.controller!.text,
-                    image: _image,
-                  ),
-                );
-                context.pop();
-                
-              },
-              label: Text("Save"),
-              icon: Icon(Icons.save),
             ),
           ],
         ),

@@ -2,8 +2,9 @@ import 'package:meal_planner/data/local/db/local.db.dart';
 import 'package:meal_planner/data/local/repository/local.product.repository.dart';
 import 'package:meal_planner/data/local/repository/local.recipe.repository.dart';
 import 'package:meal_planner/domain/abstract/repository.dart';
-import 'package:meal_planner/domain/entities/product.entity.dart';
-import 'package:meal_planner/domain/entities/recipe.entity.dart';
+import 'package:meal_planner/domain/entities/product/product.entity.dart';
+import 'package:meal_planner/domain/entities/recipe/recipe.entity.dart';
+
 import 'package:meal_planner/domain/useCase/product/add.useCase.dart';
 import 'package:meal_planner/domain/useCase/product/delele.useCase.dart';
 import 'package:meal_planner/domain/useCase/product/getAll.useCase.dart';

@@ -1,12 +1,8 @@
-import 'dart:io';
-
-import 'package:image_picker/image_picker.dart';
 import 'package:meal_planner/domain/abstract/repository.dart';
-import 'package:meal_planner/domain/dto/product/create.product.dto.dart';
-import 'package:meal_planner/domain/entities/product.entity.dart';
 import 'package:meal_planner/domain/abstract/use_case.dart';
+import 'package:meal_planner/domain/dto/product/create.product.dto.dart';
+import 'package:meal_planner/domain/entities/product/product.entity.dart';
 import 'package:meal_planner/utils/result.dart';
-import 'package:path_provider/path_provider.dart';
 
 final class AddProductUseCase
     implements UseCase<CreateProductDTO, ProductEntity> {
@@ -26,6 +22,7 @@ final class AddProductUseCase
       case Error<void>():
         return Result.error(res.error);
     }
+    print("Product added: ${product.name}");
     return Result.ok(product);
   }
 }

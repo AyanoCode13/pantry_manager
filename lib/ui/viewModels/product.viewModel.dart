@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:logger/logger.dart';
 import 'package:meal_planner/domain/dto/product/create.product.dto.dart';
-import 'package:meal_planner/domain/entities/product.entity.dart';
+import 'package:meal_planner/domain/entities/product/product.entity.dart';
 import 'package:meal_planner/domain/useCase/product/add.useCase.dart';
 import 'package:meal_planner/domain/useCase/product/delele.useCase.dart';
 import 'package:meal_planner/domain/useCase/product/getAll.useCase.dart';
@@ -28,11 +28,15 @@ final class ProductViewModel extends ChangeNotifier {
     add = ComplexCommand(_add);
     delete = ComplexCommand(_delete);
     getById = ComplexCommand(_getById);
+    search = ComplexCommand(_search);
   }
   final Logger _logger = Logger();
 
   late List<ProductEntity> _products;
   List<ProductEntity> get products => _products;
+
+  late List<ProductEntity> _searchedProducts = [];
+  List<ProductEntity> get searchedProducts => _searchedProducts;
 
   late ProductEntity? _product;
   ProductEntity get product => _product!;
@@ -41,8 +45,23 @@ final class ProductViewModel extends ChangeNotifier {
   late final ComplexCommand<void, CreateProductDTO> add;
   late final ComplexCommand<void, ProductEntity> delete;
   late final ComplexCommand<void, String> getById;
+  late final ComplexCommand<void, String> search;
   
-  
+    Future<Result<void>> _search(String query) async {
+    try {
+      final res = await _getAllProductsUseCase.call(input: null);
+      switch (res) {
+        case Ok<List<ProductEntity>>():
+          _searchedProducts = res.value;
+        case Error<List<ProductEntity>>():
+          Result.error(res.error);
+      }
+      return res;
+    } finally {
+      notifyListeners();
+    }
+  }
+
   Future<Result<void>> _load() async {
     try {
       final res = await _getAllProductsUseCase.call(input: null);
@@ -76,6 +95,7 @@ final class ProductViewModel extends ChangeNotifier {
   Future<Result<void>> _add(CreateProductDTO data) async {
     try {
       final res = await _addProductUseCase.call(input: data);
+      _logger.i(res);
       switch (res) {
         case Ok<ProductEntity>():
           await _load();
@@ -91,6 +111,7 @@ final class ProductViewModel extends ChangeNotifier {
   Future<Result<void>> _delete(ProductEntity product) async {
     try {
       final res = await _deleteProductUseCase.call(input: product.id);
+      await _load();
       switch (res) {
         case Ok<void>():
           _products = List.from(_products)..remove(product);

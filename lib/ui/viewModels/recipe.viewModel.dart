@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:meal_planner/domain/dto/recipe/create.recipe.dto.dart';
-import 'package:meal_planner/domain/entities/recipe.entity.dart';
+import 'package:meal_planner/domain/entities/recipe/recipe.entity.dart';
 import 'package:meal_planner/domain/useCase/recipe/add.useCase.dart';
 import 'package:meal_planner/domain/useCase/recipe/getAll.useCase.dart';
 import 'package:meal_planner/utils/command.dart';

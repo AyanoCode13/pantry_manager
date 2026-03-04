@@ -187,32 +187,3 @@ class _ViewAndEditProductScreenState extends State<ViewAndEditProductScreen> {
   }
 }
 
-
-/*
-Scaffold(
-      appBar: AppBar(
-        title: Text(product.name),
-        actions: [
-          IconButton(
-            onPressed: () {
-              context.read<ProductViewModel>().delete.execute(arg: product);
-              context.pop();
-            },
-            icon: Icon(Icons.delete),
-          ),
-        ],
-      ),
-      body: ListenableBuilder(
-        listenable: context.watch<ProductViewModel>().getById, 
-        builder: (context, child) {
-          if(context.watch<ProductViewModel>().getById.running){
-            return Center(child: Text.rich(TextSpan(text: "...Loading")));
-          }
-          return child!;
-        },
-        child: ListenableBuilder(listenable: context.watch<ProductViewModel>(), builder: (context,_){
-          return Center(child: Text.rich(TextSpan(text: "View and Edit")));
-        }),
-      )
-    );
-*/

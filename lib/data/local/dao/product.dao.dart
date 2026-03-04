@@ -5,17 +5,17 @@ import 'package:meal_planner/data/local/models/product.model.dart';
 @dao
 abstract class ProductDAO {
   @Query('SELECT * FROM products')
-  Future<List<ProductModel>> findAllProducts();
+  Future<List<ProductModel>> findAll();
 
   @Query('SELECT * FROM products WHERE id = :id')
-  Future<ProductModel?> findProductById(String id);
+  Future<ProductModel?> findById(String id);
 
   @Insert(onConflict: OnConflictStrategy.replace)
-  Future<void> insertProduct(ProductModel product);
+  Future<void> insert(ProductModel product);
 
   @Update(onConflict: OnConflictStrategy.replace)
-  Future<void> updateProduct(ProductModel product);
+  Future<void> update(ProductModel product);
 
   @Query( 'DELETE FROM products WHERE id = :id')
-  Future<void> deleteProduct(String id);
+  Future<void> delete(String id);
 }

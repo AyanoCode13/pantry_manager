@@ -98,9 +98,9 @@ class _$LocalDatabase extends LocalDatabase {
       },
       onCreate: (database, version) async {
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `products` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `price` REAL NOT NULL, `quantity` INTEGER NOT NULL, `image` TEXT, PRIMARY KEY (`id`))');
+            'CREATE TABLE IF NOT EXISTS `products` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `description` TEXT NOT NULL, `price` REAL NOT NULL, `quantity` INTEGER NOT NULL, `image` TEXT NOT NULL, PRIMARY KEY (`id`))');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `recipes` (`name` TEXT NOT NULL, `price` REAL NOT NULL, `id` TEXT NOT NULL, PRIMARY KEY (`id`))');
+            'CREATE TABLE IF NOT EXISTS `recipes` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `description` TEXT NOT NULL, `price` REAL NOT NULL, `image` TEXT NOT NULL, `preparationTime` TEXT NOT NULL, PRIMARY KEY (`id`))');
         await database.execute(
             'CREATE UNIQUE INDEX `index_products_id` ON `products` (`id`)');
         await database.execute(
@@ -138,6 +138,7 @@ class _$ProductDAO extends ProductDAO {
             (ProductModel item) => <String, Object?>{
                   'id': item.id,
                   'name': item.name,
+                  'description': item.description,
                   'price': item.price,
                   'quantity': item.quantity,
                   'image': item.image
@@ -149,6 +150,7 @@ class _$ProductDAO extends ProductDAO {
             (ProductModel item) => <String, Object?>{
                   'id': item.id,
                   'name': item.name,
+                  'description': item.description,
                   'price': item.price,
                   'quantity': item.quantity,
                   'image': item.image
@@ -165,42 +167,44 @@ class _$ProductDAO extends ProductDAO {
   final UpdateAdapter<ProductModel> _productModelUpdateAdapter;
 
   @override
-  Future<List<ProductModel>> findAllProducts() async {
+  Future<List<ProductModel>> findAll() async {
     return _queryAdapter.queryList('SELECT * FROM products',
         mapper: (Map<String, Object?> row) => ProductModel(
             id: row['id'] as String,
             name: row['name'] as String,
+            description: row['description'] as String,
             price: row['price'] as double,
             quantity: row['quantity'] as int,
-            image: row['image'] as String?));
+            image: row['image'] as String));
   }
 
   @override
-  Future<ProductModel?> findProductById(String id) async {
+  Future<ProductModel?> findById(String id) async {
     return _queryAdapter.query('SELECT * FROM products WHERE id = ?1',
         mapper: (Map<String, Object?> row) => ProductModel(
             id: row['id'] as String,
             name: row['name'] as String,
+            description: row['description'] as String,
             price: row['price'] as double,
             quantity: row['quantity'] as int,
-            image: row['image'] as String?),
+            image: row['image'] as String),
         arguments: [id]);
   }
 
   @override
-  Future<void> deleteProduct(String id) async {
+  Future<void> delete(String id) async {
     await _queryAdapter
         .queryNoReturn('DELETE FROM products WHERE id = ?1', arguments: [id]);
   }
 
   @override
-  Future<void> insertProduct(ProductModel product) async {
+  Future<void> insert(ProductModel product) async {
     await _productModelInsertionAdapter.insert(
         product, OnConflictStrategy.replace);
   }
 
   @override
-  Future<void> updateProduct(ProductModel product) async {
+  Future<void> update(ProductModel product) async {
     await _productModelUpdateAdapter.update(
         product, OnConflictStrategy.replace);
   }
@@ -215,9 +219,12 @@ class _$RecipeDAO extends RecipeDAO {
             database,
             'recipes',
             (RecipeModel item) => <String, Object?>{
+                  'id': item.id,
                   'name': item.name,
+                  'description': item.description,
                   'price': item.price,
-                  'id': item.id
+                  'image': item.image,
+                  'preparationTime': item.preparationTime
                 });
 
   final sqflite.DatabaseExecutor database;
@@ -234,7 +241,10 @@ class _$RecipeDAO extends RecipeDAO {
         mapper: (Map<String, Object?> row) => RecipeModel(
             id: row['id'] as String,
             name: row['name'] as String,
-            price: row['price'] as double));
+            description: row['description'] as String,
+            price: row['price'] as double,
+            image: row['image'] as String,
+            preparationTime: row['preparationTime'] as String));
   }
 
   @override
